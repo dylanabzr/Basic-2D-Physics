@@ -4,14 +4,12 @@
 #define WINDOW_HEIGHT 1000
 #define WINDOW_WIDTH 1000
 
-struct Object{
-  int posX, posY, height, width;
-};
+struct Object{int posX, posY, height, width;};
 
 class Game_Objects{
   protected:
-    Object human = {WINDOW_WIDTH/2, 3 * WINDOW_HEIGHT / 5, 50, 30};
-    Object ground = {0, human.posY + human.height, 5, WINDOW_WIDTH};
+    Object human {WINDOW_WIDTH/2, 3 * WINDOW_HEIGHT / 5, 50, 30};
+    Object ground {0, human.posY + human.height, 5, WINDOW_WIDTH};
     bool isColliding(const Object obj1, const Object obj2) { // for now that function is useless, but i'll use it in the future :)
       bool xOverlap = (obj1.posX < obj2.posX + obj2.width) && (obj2.posX < obj1.posX + obj1.width);
       bool yOverlap =  (obj1.posY < obj2.posY + obj2.height) && (obj2.posY < obj1.posY + obj1.height);
@@ -24,7 +22,7 @@ class Movement : public Game_Objects{
   protected:
     char X_Movement_Status = 0, Y_Movement_Status = 0;
     int Xcount = 0, Ycount = 0;
-    void walk(){
+    void walk() {
       if (IsKeyDown(KEY_D)) X_Movement_Status = 1;
       if (IsKeyDown(KEY_A)) X_Movement_Status = -1;
       human.posX += 5 * X_Movement_Status;
@@ -34,14 +32,14 @@ class Movement : public Game_Objects{
         Xcount = 0;
       } 
     }
-    void jump(){
+    void jump() {
       if (!Y_Movement_Status) {
         if (IsKeyDown(KEY_SPACE)) Y_Movement_Status = 1;
       } else {
         human.posY -= 7 * Y_Movement_Status;
         Ycount++;
-        if (Y_Movement_Status == 1){
-          if(Ycount >= 15){
+        if (Y_Movement_Status == 1) {
+          if (Ycount >= 15) {
             Y_Movement_Status = -1;
             Ycount=0;
           }
@@ -54,7 +52,7 @@ class Movement : public Game_Objects{
           }
         }
     }
-    void basicMovement(){
+    void basicMovement() {
       walk();
       jump();
     }
@@ -63,7 +61,7 @@ class Movement : public Game_Objects{
 
 class Graphics : Movement{
   protected:
-    void gameUI(){
+    void gameUI() {
       BeginDrawing();
       ClearBackground(RAYWHITE);
       DrawRectangle(human.posX, human.posY, human.width, human.height, GRAY);
