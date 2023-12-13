@@ -1,10 +1,15 @@
 #include <raylib.h>
 #include <iostream>
 #include <unistd.h>
+#include <cstdint>
 #define WINDOW_HEIGHT 1000
 #define WINDOW_WIDTH 1000
 
-struct Object{int posX, posY, height, width;};
+struct Object{
+  int posX, posY, height, width;
+};
+
+
 
 class Game_Objects{
   protected:
@@ -20,11 +25,10 @@ class Game_Objects{
 
 class Movement : public Game_Objects{
   protected:
-    char X_Movement_Status = 0, Y_Movement_Status = 0;
-    int Xcount = 0, Ycount = 0;
+    int8_t X_Movement_Status = 0, Y_Movement_Status = 0;
+    uint16_t Xcount = 0, Ycount = 0;
     void walk() {
-      if (IsKeyDown(KEY_D)) X_Movement_Status = 1;
-      if (IsKeyDown(KEY_A)) X_Movement_Status = -1;
+      X_Movement_Status = IsKeyDown(KEY_D) - IsKeyDown(KEY_A);
       human.posX += 5 * X_Movement_Status;
       if (X_Movement_Status) Xcount++;
       if (Xcount >= 10) {
@@ -34,23 +38,23 @@ class Movement : public Game_Objects{
     }
     void jump() {
       if (!Y_Movement_Status) {
-        if (IsKeyDown(KEY_SPACE)) Y_Movement_Status = 1;
-      } else {
-        human.posY -= 7 * Y_Movement_Status;
-        Ycount++;
-        if (Y_Movement_Status == 1) {
+        Y_Movement_Status = IsKeyDown(KEY_SPACE);
+        return;
+      }  
+      human.posY -= 7 * Y_Movement_Status;
+      Ycount++;
+      if (Y_Movement_Status == 1) {
+        if (Ycount >= 15) {
+          Y_Movement_Status = -1;
+          Ycount=0;
+        }
+      }
+      if (Y_Movement_Status == -1) {
           if (Ycount >= 15) {
-            Y_Movement_Status = -1;
-            Ycount=0;
+            Y_Movement_Status = 0;
+            Ycount = 0;
           }
-        }
-        if (Y_Movement_Status == -1) {
-            if (Ycount >= 15) {
-              Y_Movement_Status = 0;
-              Ycount = 0;
-            }
-          }
-        }
+      }
     }
     void basicMovement() {
       walk();
